@@ -4,7 +4,7 @@
  * Machine generated for CPU 'nios2_cpu' in SOPC Builder design 'system'
  * SOPC Builder design path: ../../system.sopcinfo
  *
- * Generated: Mon Feb 05 19:06:42 CET 2024
+ * Generated: Thu Feb 08 20:08:05 CET 2024
  */
 
 /*
@@ -133,12 +133,12 @@
  *
  */
 
+#define __ACC_SCALE
 #define __ALTERA_AVALON_JTAG_UART
 #define __ALTERA_AVALON_NEW_SDRAM_CONTROLLER
 #define __ALTERA_AVALON_PERFORMANCE_COUNTER
 #define __ALTERA_AVALON_SGDMA
 #define __ALTERA_NIOS2_GEN2
-#define __UP_DOWN_SCALER
 
 
 /*
@@ -175,6 +175,20 @@
 #define ALT_STDOUT_PRESENT
 #define ALT_STDOUT_TYPE "altera_avalon_jtag_uart"
 #define ALT_SYSTEM_NAME "system"
+
+
+/*
+ * acc_scale configuration
+ *
+ */
+
+#define ACC_SCALE_BASE 0x8001108
+#define ACC_SCALE_IRQ -1
+#define ACC_SCALE_IRQ_INTERRUPT_CONTROLLER_ID -1
+#define ACC_SCALE_NAME "/dev/acc_scale"
+#define ACC_SCALE_SPAN 8
+#define ACC_SCALE_TYPE "acc_scale"
+#define ALT_MODULE_CLASS_acc_scale acc_scale
 
 
 /*
@@ -422,19 +436,5 @@
 #define SGDMA_S2M_UNALIGNED_TRANSFER 0
 #define SGDMA_S2M_WRITE_BLOCK_DATA_WIDTH 8
 #define SGDMA_S2M_WRITE_BURSTCOUNT_WIDTH 4
-
-
-/*
- * up_down_scaler configuration
- *
- */
-
-#define ALT_MODULE_CLASS_up_down_scaler up_down_scaler
-#define UP_DOWN_SCALER_BASE 0x8001108
-#define UP_DOWN_SCALER_IRQ -1
-#define UP_DOWN_SCALER_IRQ_INTERRUPT_CONTROLLER_ID -1
-#define UP_DOWN_SCALER_NAME "/dev/up_down_scaler"
-#define UP_DOWN_SCALER_SPAN 8
-#define UP_DOWN_SCALER_TYPE "up_down_scaler"
 
 #endif /* __SYSTEM_H_ */
