@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <EnsembleReport name="system" kind="system" version="1.0" fabric="QSYS">
  <!-- Format version 18.1 625 (Future versions may contain additional information.) -->
- <!-- 2024.02.08.19:24:17 -->
+ <!-- 2024.02.08.19:28:31 -->
  <!-- A collection of modules and connections -->
  <parameter name="AUTO_GENERATION_ID">
   <type>java.lang.Integer</type>
-  <value>1707416657</value>
+  <value>1707416911</value>
   <derived>false</derived>
   <enabled>true</enabled>
   <visible>false</visible>
@@ -95,7 +95,7 @@
   <visible>true</visible>
   <valid>true</valid>
  </parameter>
- <module name="acc_scale_0" kind="acc_scale" version="1.0" path="acc_scale_0">
+ <module name="acc_scale" kind="acc_scale" version="1.0" path="acc_scale">
   <!-- Describes a single module. Module parameters are
 the requested settings for a module instance. -->
   <parameter name="max_width">
@@ -3548,7 +3548,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="dataSlaveMapParam">
    <type>java.lang.String</type>
-   <value><![CDATA[<address-map><slave name='sdram.s1' start='0x4000000' end='0x8000000' type='altera_avalon_new_sdram_controller.s1' /><slave name='nios2_cpu.debug_mem_slave' start='0x8000800' end='0x8001000' type='altera_nios2_gen2.debug_mem_slave' /><slave name='perf_cnt.control_slave' start='0x8001000' end='0x8001080' type='altera_avalon_performance_counter.control_slave' /><slave name='sgdma_s2m.csr' start='0x8001080' end='0x80010C0' type='altera_avalon_sgdma.csr' /><slave name='sgdma_m2s.csr' start='0x80010C0' end='0x8001100' type='altera_avalon_sgdma.csr' /><slave name='acc_scale_0.amms' start='0x8001100' end='0x8001108' type='acc_scale.amms' /><slave name='jtag_uart.avalon_jtag_slave' start='0x8001108' end='0x8001110' type='altera_avalon_jtag_uart.avalon_jtag_slave' /></address-map>]]></value>
+   <value><![CDATA[<address-map><slave name='sdram.s1' start='0x4000000' end='0x8000000' type='altera_avalon_new_sdram_controller.s1' /><slave name='nios2_cpu.debug_mem_slave' start='0x8000800' end='0x8001000' type='altera_nios2_gen2.debug_mem_slave' /><slave name='perf_cnt.control_slave' start='0x8001000' end='0x8001080' type='altera_avalon_performance_counter.control_slave' /><slave name='sgdma_s2m.csr' start='0x8001080' end='0x80010C0' type='altera_avalon_sgdma.csr' /><slave name='sgdma_m2s.csr' start='0x80010C0' end='0x8001100' type='altera_avalon_sgdma.csr' /><slave name='jtag_uart.avalon_jtag_slave' start='0x8001100' end='0x8001108' type='altera_avalon_jtag_uart.avalon_jtag_slave' /><slave name='acc_scale.amms' start='0x8001108' end='0x8001110' type='acc_scale.amms' /></address-map>]]></value>
    <derived>false</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -4216,10 +4216,10 @@ parameters are a RESULT of the module parameters. -->
    </port>
    <memoryBlock>
     <isBridge>false</isBridge>
-    <moduleName>acc_scale_0</moduleName>
+    <moduleName>acc_scale</moduleName>
     <slaveName>amms</slaveName>
-    <name>acc_scale_0.amms</name>
-    <baseAddress>134222080</baseAddress>
+    <name>acc_scale.amms</name>
+    <baseAddress>134222088</baseAddress>
     <span>8</span>
    </memoryBlock>
    <memoryBlock>
@@ -4227,7 +4227,7 @@ parameters are a RESULT of the module parameters. -->
     <moduleName>jtag_uart</moduleName>
     <slaveName>avalon_jtag_slave</slaveName>
     <name>jtag_uart.avalon_jtag_slave</name>
-    <baseAddress>134222088</baseAddress>
+    <baseAddress>134222080</baseAddress>
     <span>8</span>
    </memoryBlock>
    <memoryBlock>
@@ -9681,9 +9681,9 @@ parameters are a RESULT of the module parameters. -->
    </clockDomainMember>
    <clockDomainMember>
     <isBridge>false</isBridge>
-    <moduleName>acc_scale_0</moduleName>
+    <moduleName>acc_scale</moduleName>
     <slaveName>clock</slaveName>
-    <name>acc_scale_0.clock</name>
+    <name>acc_scale.clock</name>
    </clockDomainMember>
   </interface>
   <interface name="outclk1" kind="clock_source" version="18.1">
@@ -14472,11 +14472,11 @@ parameters are a RESULT of the module parameters. -->
   </interface>
  </module>
  <connection
-   name="nios2_cpu.data_master/acc_scale_0.amms"
+   name="nios2_cpu.data_master/acc_scale.amms"
    kind="avalon"
    version="18.1"
    start="nios2_cpu.data_master"
-   end="acc_scale_0.amms">
+   end="acc_scale.amms">
   <parameter name="arbitrationPriority">
    <type>int</type>
    <value>1</value>
@@ -14487,7 +14487,7 @@ parameters are a RESULT of the module parameters. -->
   </parameter>
   <parameter name="baseAddress">
    <type>java.math.BigInteger</type>
-   <value>0x08001100</value>
+   <value>0x08001108</value>
    <derived>false</derived>
    <enabled>true</enabled>
    <visible>true</visible>
@@ -14519,7 +14519,7 @@ parameters are a RESULT of the module parameters. -->
   </parameter>
   <startModule>nios2_cpu</startModule>
   <startConnectionPoint>data_master</startConnectionPoint>
-  <endModule>acc_scale_0</endModule>
+  <endModule>acc_scale</endModule>
   <endConnectionPoint>amms</endConnectionPoint>
  </connection>
  <connection
@@ -14538,7 +14538,7 @@ parameters are a RESULT of the module parameters. -->
   </parameter>
   <parameter name="baseAddress">
    <type>java.math.BigInteger</type>
-   <value>0x08001108</value>
+   <value>0x08001100</value>
    <derived>false</derived>
    <enabled>true</enabled>
    <visible>true</visible>
@@ -15237,10 +15237,10 @@ parameters are a RESULT of the module parameters. -->
   <endConnectionPoint>s1</endConnectionPoint>
  </connection>
  <connection
-   name="acc_scale_0.aso/sgdma_s2m.in"
+   name="acc_scale.aso/sgdma_s2m.in"
    kind="avalon_streaming"
    version="18.1"
-   start="acc_scale_0.aso"
+   start="acc_scale.aso"
    end="sgdma_s2m.in">
   <parameter name="deviceFamily">
    <type>java.lang.String</type>
@@ -15258,17 +15258,17 @@ parameters are a RESULT of the module parameters. -->
    <visible>true</visible>
    <valid>true</valid>
   </parameter>
-  <startModule>acc_scale_0</startModule>
+  <startModule>acc_scale</startModule>
   <startConnectionPoint>aso</startConnectionPoint>
   <endModule>sgdma_s2m</endModule>
   <endConnectionPoint>in</endConnectionPoint>
  </connection>
  <connection
-   name="sgdma_m2s.out/acc_scale_0.asi"
+   name="sgdma_m2s.out/acc_scale.asi"
    kind="avalon_streaming"
    version="18.1"
    start="sgdma_m2s.out"
-   end="acc_scale_0.asi">
+   end="acc_scale.asi">
   <parameter name="deviceFamily">
    <type>java.lang.String</type>
    <value>UNKNOWN</value>
@@ -15287,7 +15287,7 @@ parameters are a RESULT of the module parameters. -->
   </parameter>
   <startModule>sgdma_m2s</startModule>
   <startConnectionPoint>out</startConnectionPoint>
-  <endModule>acc_scale_0</endModule>
+  <endModule>acc_scale</endModule>
   <endConnectionPoint>asi</endConnectionPoint>
  </connection>
  <connection
@@ -15480,11 +15480,11 @@ parameters are a RESULT of the module parameters. -->
   <endConnectionPoint>clk</endConnectionPoint>
  </connection>
  <connection
-   name="pll.outclk0/acc_scale_0.clock"
+   name="pll.outclk0/acc_scale.clock"
    kind="clock"
    version="18.1"
    start="pll.outclk0"
-   end="acc_scale_0.clock">
+   end="acc_scale.clock">
   <parameter name="deviceFamily">
    <type>java.lang.String</type>
    <value>UNKNOWN</value>
@@ -15503,7 +15503,7 @@ parameters are a RESULT of the module parameters. -->
   </parameter>
   <startModule>pll</startModule>
   <startConnectionPoint>outclk0</startConnectionPoint>
-  <endModule>acc_scale_0</endModule>
+  <endModule>acc_scale</endModule>
   <endConnectionPoint>clock</endConnectionPoint>
  </connection>
  <connection
@@ -15801,11 +15801,11 @@ parameters are a RESULT of the module parameters. -->
   <endConnectionPoint>reset</endConnectionPoint>
  </connection>
  <connection
-   name="clk_50Mhz.clk_reset/acc_scale_0.reset"
+   name="clk_50Mhz.clk_reset/acc_scale.reset"
    kind="reset"
    version="18.1"
    start="clk_50Mhz.clk_reset"
-   end="acc_scale_0.reset">
+   end="acc_scale.reset">
   <parameter name="deviceFamily">
    <type>java.lang.String</type>
    <value>UNKNOWN</value>
@@ -15824,7 +15824,7 @@ parameters are a RESULT of the module parameters. -->
   </parameter>
   <startModule>clk_50Mhz</startModule>
   <startConnectionPoint>clk_reset</startConnectionPoint>
-  <endModule>acc_scale_0</endModule>
+  <endModule>acc_scale</endModule>
   <endConnectionPoint>reset</endConnectionPoint>
  </connection>
  <connection
@@ -16017,11 +16017,11 @@ parameters are a RESULT of the module parameters. -->
   <endConnectionPoint>reset</endConnectionPoint>
  </connection>
  <connection
-   name="nios2_cpu.debug_reset_request/acc_scale_0.reset"
+   name="nios2_cpu.debug_reset_request/acc_scale.reset"
    kind="reset"
    version="18.1"
    start="nios2_cpu.debug_reset_request"
-   end="acc_scale_0.reset">
+   end="acc_scale.reset">
   <parameter name="deviceFamily">
    <type>java.lang.String</type>
    <value>UNKNOWN</value>
@@ -16040,7 +16040,7 @@ parameters are a RESULT of the module parameters. -->
   </parameter>
   <startModule>nios2_cpu</startModule>
   <startConnectionPoint>debug_reset_request</startConnectionPoint>
-  <endModule>acc_scale_0</endModule>
+  <endModule>acc_scale</endModule>
   <endConnectionPoint>reset</endConnectionPoint>
  </connection>
  <plugin>

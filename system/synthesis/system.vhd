@@ -248,12 +248,12 @@ architecture rtl of system is
 			sgdma_s2m_m_write_waitrequest               : out std_logic;                                        -- waitrequest
 			sgdma_s2m_m_write_write                     : in  std_logic                     := 'X';             -- write
 			sgdma_s2m_m_write_writedata                 : in  std_logic_vector(7 downto 0)  := (others => 'X'); -- writedata
-			acc_scale_0_amms_address                    : out std_logic_vector(0 downto 0);                     -- address
-			acc_scale_0_amms_write                      : out std_logic;                                        -- write
-			acc_scale_0_amms_read                       : out std_logic;                                        -- read
-			acc_scale_0_amms_readdata                   : in  std_logic_vector(31 downto 0) := (others => 'X'); -- readdata
-			acc_scale_0_amms_writedata                  : out std_logic_vector(31 downto 0);                    -- writedata
-			acc_scale_0_amms_waitrequest                : in  std_logic                     := 'X';             -- waitrequest
+			acc_scale_amms_address                      : out std_logic_vector(0 downto 0);                     -- address
+			acc_scale_amms_write                        : out std_logic;                                        -- write
+			acc_scale_amms_read                         : out std_logic;                                        -- read
+			acc_scale_amms_readdata                     : in  std_logic_vector(31 downto 0) := (others => 'X'); -- readdata
+			acc_scale_amms_writedata                    : out std_logic_vector(31 downto 0);                    -- writedata
+			acc_scale_amms_waitrequest                  : in  std_logic                     := 'X';             -- waitrequest
 			jtag_uart_avalon_jtag_slave_address         : out std_logic_vector(0 downto 0);                     -- address
 			jtag_uart_avalon_jtag_slave_write           : out std_logic;                                        -- write
 			jtag_uart_avalon_jtag_slave_read            : out std_logic;                                        -- read
@@ -441,17 +441,17 @@ architecture rtl of system is
 		);
 	end component system_rst_controller_001;
 
-	signal acc_scale_0_aso_valid                                         : std_logic;                     -- acc_scale_0:aso_valid -> sgdma_s2m:in_valid
-	signal acc_scale_0_aso_data                                          : std_logic_vector(7 downto 0);  -- acc_scale_0:aso_data -> sgdma_s2m:in_data
-	signal acc_scale_0_aso_ready                                         : std_logic;                     -- sgdma_s2m:in_ready -> acc_scale_0:aso_ready
-	signal acc_scale_0_aso_startofpacket                                 : std_logic;                     -- acc_scale_0:aso_sop -> sgdma_s2m:in_startofpacket
-	signal acc_scale_0_aso_endofpacket                                   : std_logic;                     -- acc_scale_0:aso_eop -> sgdma_s2m:in_endofpacket
-	signal sgdma_m2s_out_valid                                           : std_logic;                     -- sgdma_m2s:out_valid -> acc_scale_0:asi_valid
-	signal sgdma_m2s_out_data                                            : std_logic_vector(7 downto 0);  -- sgdma_m2s:out_data -> acc_scale_0:asi_data
-	signal sgdma_m2s_out_ready                                           : std_logic;                     -- acc_scale_0:asi_ready -> sgdma_m2s:out_ready
-	signal sgdma_m2s_out_startofpacket                                   : std_logic;                     -- sgdma_m2s:out_startofpacket -> acc_scale_0:asi_sop
-	signal sgdma_m2s_out_endofpacket                                     : std_logic;                     -- sgdma_m2s:out_endofpacket -> acc_scale_0:asi_eop
-	signal pll_outclk0_clk                                               : std_logic;                     -- pll:outclk_0 -> [acc_scale_0:clk, irq_mapper:clk, jtag_uart:clk, mm_interconnect_0:pll_outclk0_clk, nios2_cpu:clk, perf_cnt:clk, rst_controller:clk, sdram:clk, sgdma_m2s:clk, sgdma_s2m:clk]
+	signal acc_scale_aso_valid                                           : std_logic;                     -- acc_scale:aso_valid -> sgdma_s2m:in_valid
+	signal acc_scale_aso_data                                            : std_logic_vector(7 downto 0);  -- acc_scale:aso_data -> sgdma_s2m:in_data
+	signal acc_scale_aso_ready                                           : std_logic;                     -- sgdma_s2m:in_ready -> acc_scale:aso_ready
+	signal acc_scale_aso_startofpacket                                   : std_logic;                     -- acc_scale:aso_sop -> sgdma_s2m:in_startofpacket
+	signal acc_scale_aso_endofpacket                                     : std_logic;                     -- acc_scale:aso_eop -> sgdma_s2m:in_endofpacket
+	signal sgdma_m2s_out_valid                                           : std_logic;                     -- sgdma_m2s:out_valid -> acc_scale:asi_valid
+	signal sgdma_m2s_out_data                                            : std_logic_vector(7 downto 0);  -- sgdma_m2s:out_data -> acc_scale:asi_data
+	signal sgdma_m2s_out_ready                                           : std_logic;                     -- acc_scale:asi_ready -> sgdma_m2s:out_ready
+	signal sgdma_m2s_out_startofpacket                                   : std_logic;                     -- sgdma_m2s:out_startofpacket -> acc_scale:asi_sop
+	signal sgdma_m2s_out_endofpacket                                     : std_logic;                     -- sgdma_m2s:out_endofpacket -> acc_scale:asi_eop
+	signal pll_outclk0_clk                                               : std_logic;                     -- pll:outclk_0 -> [acc_scale:clk, irq_mapper:clk, jtag_uart:clk, mm_interconnect_0:pll_outclk0_clk, nios2_cpu:clk, perf_cnt:clk, rst_controller:clk, sdram:clk, sgdma_m2s:clk, sgdma_s2m:clk]
 	signal nios2_cpu_data_master_readdata                                : std_logic_vector(31 downto 0); -- mm_interconnect_0:nios2_cpu_data_master_readdata -> nios2_cpu:d_readdata
 	signal nios2_cpu_data_master_waitrequest                             : std_logic;                     -- mm_interconnect_0:nios2_cpu_data_master_waitrequest -> nios2_cpu:d_waitrequest
 	signal nios2_cpu_data_master_debugaccess                             : std_logic;                     -- nios2_cpu:debug_mem_slave_debugaccess_to_roms -> mm_interconnect_0:nios2_cpu_data_master_debugaccess
@@ -491,12 +491,12 @@ architecture rtl of system is
 	signal sgdma_s2m_m_write_address                                     : std_logic_vector(31 downto 0); -- sgdma_s2m:m_write_address -> mm_interconnect_0:sgdma_s2m_m_write_address
 	signal sgdma_s2m_m_write_write                                       : std_logic;                     -- sgdma_s2m:m_write_write -> mm_interconnect_0:sgdma_s2m_m_write_write
 	signal sgdma_s2m_m_write_writedata                                   : std_logic_vector(7 downto 0);  -- sgdma_s2m:m_write_writedata -> mm_interconnect_0:sgdma_s2m_m_write_writedata
-	signal mm_interconnect_0_acc_scale_0_amms_readdata                   : std_logic_vector(31 downto 0); -- acc_scale_0:amms_readdata -> mm_interconnect_0:acc_scale_0_amms_readdata
-	signal mm_interconnect_0_acc_scale_0_amms_waitrequest                : std_logic;                     -- acc_scale_0:amms_waitrequest -> mm_interconnect_0:acc_scale_0_amms_waitrequest
-	signal mm_interconnect_0_acc_scale_0_amms_address                    : std_logic_vector(0 downto 0);  -- mm_interconnect_0:acc_scale_0_amms_address -> acc_scale_0:amms_address
-	signal mm_interconnect_0_acc_scale_0_amms_read                       : std_logic;                     -- mm_interconnect_0:acc_scale_0_amms_read -> acc_scale_0:amms_read
-	signal mm_interconnect_0_acc_scale_0_amms_write                      : std_logic;                     -- mm_interconnect_0:acc_scale_0_amms_write -> acc_scale_0:amms_write
-	signal mm_interconnect_0_acc_scale_0_amms_writedata                  : std_logic_vector(31 downto 0); -- mm_interconnect_0:acc_scale_0_amms_writedata -> acc_scale_0:amms_writedata
+	signal mm_interconnect_0_acc_scale_amms_readdata                     : std_logic_vector(31 downto 0); -- acc_scale:amms_readdata -> mm_interconnect_0:acc_scale_amms_readdata
+	signal mm_interconnect_0_acc_scale_amms_waitrequest                  : std_logic;                     -- acc_scale:amms_waitrequest -> mm_interconnect_0:acc_scale_amms_waitrequest
+	signal mm_interconnect_0_acc_scale_amms_address                      : std_logic_vector(0 downto 0);  -- mm_interconnect_0:acc_scale_amms_address -> acc_scale:amms_address
+	signal mm_interconnect_0_acc_scale_amms_read                         : std_logic;                     -- mm_interconnect_0:acc_scale_amms_read -> acc_scale:amms_read
+	signal mm_interconnect_0_acc_scale_amms_write                        : std_logic;                     -- mm_interconnect_0:acc_scale_amms_write -> acc_scale:amms_write
+	signal mm_interconnect_0_acc_scale_amms_writedata                    : std_logic_vector(31 downto 0); -- mm_interconnect_0:acc_scale_amms_writedata -> acc_scale:amms_writedata
 	signal mm_interconnect_0_jtag_uart_avalon_jtag_slave_chipselect      : std_logic;                     -- mm_interconnect_0:jtag_uart_avalon_jtag_slave_chipselect -> jtag_uart:av_chipselect
 	signal mm_interconnect_0_jtag_uart_avalon_jtag_slave_readdata        : std_logic_vector(31 downto 0); -- jtag_uart:av_readdata -> mm_interconnect_0:jtag_uart_avalon_jtag_slave_readdata
 	signal mm_interconnect_0_jtag_uart_avalon_jtag_slave_waitrequest     : std_logic;                     -- jtag_uart:av_waitrequest -> mm_interconnect_0:jtag_uart_avalon_jtag_slave_waitrequest
@@ -542,7 +542,7 @@ architecture rtl of system is
 	signal irq_mapper_receiver1_irq                                      : std_logic;                     -- sgdma_s2m:csr_irq -> irq_mapper:receiver1_irq
 	signal irq_mapper_receiver2_irq                                      : std_logic;                     -- jtag_uart:av_irq -> irq_mapper:receiver2_irq
 	signal nios2_cpu_irq_irq                                             : std_logic_vector(31 downto 0); -- irq_mapper:sender_irq -> nios2_cpu:irq
-	signal rst_controller_reset_out_reset                                : std_logic;                     -- rst_controller:reset_out -> [acc_scale_0:rst, irq_mapper:reset, mm_interconnect_0:nios2_cpu_reset_reset_bridge_in_reset_reset, rst_controller_reset_out_reset:in, rst_translator:in_reset]
+	signal rst_controller_reset_out_reset                                : std_logic;                     -- rst_controller:reset_out -> [acc_scale:rst, irq_mapper:reset, mm_interconnect_0:nios2_cpu_reset_reset_bridge_in_reset_reset, rst_controller_reset_out_reset:in, rst_translator:in_reset]
 	signal rst_controller_reset_out_reset_req                            : std_logic;                     -- rst_controller:reset_req -> [nios2_cpu:reset_req, rst_translator:reset_req_in]
 	signal nios2_cpu_debug_reset_request_reset                           : std_logic;                     -- nios2_cpu:debug_reset_request -> [rst_controller:reset_in1, rst_controller_001:reset_in1]
 	signal rst_controller_001_reset_out_reset                            : std_logic;                     -- rst_controller_001:reset_out -> pll:rst
@@ -556,26 +556,26 @@ architecture rtl of system is
 
 begin
 
-	acc_scale_0 : component acc_scale
+	acc_scale : component acc_scale
 		port map (
-			clk              => pll_outclk0_clk,                                -- clock.clk
-			rst              => rst_controller_reset_out_reset,                 -- reset.reset
-			asi_data         => sgdma_m2s_out_data,                             --   asi.data
-			asi_ready        => sgdma_m2s_out_ready,                            --      .ready
-			asi_valid        => sgdma_m2s_out_valid,                            --      .valid
-			asi_eop          => sgdma_m2s_out_endofpacket,                      --      .endofpacket
-			asi_sop          => sgdma_m2s_out_startofpacket,                    --      .startofpacket
-			aso_data         => acc_scale_0_aso_data,                           --   aso.data
-			aso_ready        => acc_scale_0_aso_ready,                          --      .ready
-			aso_valid        => acc_scale_0_aso_valid,                          --      .valid
-			aso_eop          => acc_scale_0_aso_endofpacket,                    --      .endofpacket
-			aso_sop          => acc_scale_0_aso_startofpacket,                  --      .startofpacket
-			amms_address     => mm_interconnect_0_acc_scale_0_amms_address(0),  --  amms.address
-			amms_read        => mm_interconnect_0_acc_scale_0_amms_read,        --      .read
-			amms_readdata    => mm_interconnect_0_acc_scale_0_amms_readdata,    --      .readdata
-			amms_write       => mm_interconnect_0_acc_scale_0_amms_write,       --      .write
-			amms_writedata   => mm_interconnect_0_acc_scale_0_amms_writedata,   --      .writedata
-			amms_waitrequest => mm_interconnect_0_acc_scale_0_amms_waitrequest  --      .waitrequest
+			clk              => pll_outclk0_clk,                              -- clock.clk
+			rst              => rst_controller_reset_out_reset,               -- reset.reset
+			asi_data         => sgdma_m2s_out_data,                           --   asi.data
+			asi_ready        => sgdma_m2s_out_ready,                          --      .ready
+			asi_valid        => sgdma_m2s_out_valid,                          --      .valid
+			asi_eop          => sgdma_m2s_out_endofpacket,                    --      .endofpacket
+			asi_sop          => sgdma_m2s_out_startofpacket,                  --      .startofpacket
+			aso_data         => acc_scale_aso_data,                           --   aso.data
+			aso_ready        => acc_scale_aso_ready,                          --      .ready
+			aso_valid        => acc_scale_aso_valid,                          --      .valid
+			aso_eop          => acc_scale_aso_endofpacket,                    --      .endofpacket
+			aso_sop          => acc_scale_aso_startofpacket,                  --      .startofpacket
+			amms_address     => mm_interconnect_0_acc_scale_amms_address(0),  --  amms.address
+			amms_read        => mm_interconnect_0_acc_scale_amms_read,        --      .read
+			amms_readdata    => mm_interconnect_0_acc_scale_amms_readdata,    --      .readdata
+			amms_write       => mm_interconnect_0_acc_scale_amms_write,       --      .write
+			amms_writedata   => mm_interconnect_0_acc_scale_amms_writedata,   --      .writedata
+			amms_waitrequest => mm_interconnect_0_acc_scale_amms_waitrequest  --      .waitrequest
 		);
 
 	jtag_uart : component system_jtag_uart
@@ -718,11 +718,11 @@ begin
 			descriptor_write_write        => sgdma_s2m_descriptor_write_write,           --                 .write
 			descriptor_write_writedata    => sgdma_s2m_descriptor_write_writedata,       --                 .writedata
 			csr_irq                       => irq_mapper_receiver1_irq,                   --          csr_irq.irq
-			in_startofpacket              => acc_scale_0_aso_startofpacket,              --               in.startofpacket
-			in_endofpacket                => acc_scale_0_aso_endofpacket,                --                 .endofpacket
-			in_data                       => acc_scale_0_aso_data,                       --                 .data
-			in_valid                      => acc_scale_0_aso_valid,                      --                 .valid
-			in_ready                      => acc_scale_0_aso_ready,                      --                 .ready
+			in_startofpacket              => acc_scale_aso_startofpacket,                --               in.startofpacket
+			in_endofpacket                => acc_scale_aso_endofpacket,                  --                 .endofpacket
+			in_data                       => acc_scale_aso_data,                         --                 .data
+			in_valid                      => acc_scale_aso_valid,                        --                 .valid
+			in_ready                      => acc_scale_aso_ready,                        --                 .ready
 			m_write_waitrequest           => sgdma_s2m_m_write_waitrequest,              --          m_write.waitrequest
 			m_write_address               => sgdma_s2m_m_write_address,                  --                 .address
 			m_write_write                 => sgdma_s2m_m_write_write,                    --                 .write
@@ -772,12 +772,12 @@ begin
 			sgdma_s2m_m_write_waitrequest               => sgdma_s2m_m_write_waitrequest,                             --                                      .waitrequest
 			sgdma_s2m_m_write_write                     => sgdma_s2m_m_write_write,                                   --                                      .write
 			sgdma_s2m_m_write_writedata                 => sgdma_s2m_m_write_writedata,                               --                                      .writedata
-			acc_scale_0_amms_address                    => mm_interconnect_0_acc_scale_0_amms_address,                --                      acc_scale_0_amms.address
-			acc_scale_0_amms_write                      => mm_interconnect_0_acc_scale_0_amms_write,                  --                                      .write
-			acc_scale_0_amms_read                       => mm_interconnect_0_acc_scale_0_amms_read,                   --                                      .read
-			acc_scale_0_amms_readdata                   => mm_interconnect_0_acc_scale_0_amms_readdata,               --                                      .readdata
-			acc_scale_0_amms_writedata                  => mm_interconnect_0_acc_scale_0_amms_writedata,              --                                      .writedata
-			acc_scale_0_amms_waitrequest                => mm_interconnect_0_acc_scale_0_amms_waitrequest,            --                                      .waitrequest
+			acc_scale_amms_address                      => mm_interconnect_0_acc_scale_amms_address,                  --                        acc_scale_amms.address
+			acc_scale_amms_write                        => mm_interconnect_0_acc_scale_amms_write,                    --                                      .write
+			acc_scale_amms_read                         => mm_interconnect_0_acc_scale_amms_read,                     --                                      .read
+			acc_scale_amms_readdata                     => mm_interconnect_0_acc_scale_amms_readdata,                 --                                      .readdata
+			acc_scale_amms_writedata                    => mm_interconnect_0_acc_scale_amms_writedata,                --                                      .writedata
+			acc_scale_amms_waitrequest                  => mm_interconnect_0_acc_scale_amms_waitrequest,              --                                      .waitrequest
 			jtag_uart_avalon_jtag_slave_address         => mm_interconnect_0_jtag_uart_avalon_jtag_slave_address,     --           jtag_uart_avalon_jtag_slave.address
 			jtag_uart_avalon_jtag_slave_write           => mm_interconnect_0_jtag_uart_avalon_jtag_slave_write,       --                                      .write
 			jtag_uart_avalon_jtag_slave_read            => mm_interconnect_0_jtag_uart_avalon_jtag_slave_read,        --                                      .read

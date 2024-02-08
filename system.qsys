@@ -9,7 +9,7 @@
    categories="System" />
  <parameter name="bonusData"><![CDATA[bonusData 
 {
-   element acc_scale_0
+   element acc_scale
    {
       datum _sortIndex
       {
@@ -17,11 +17,11 @@
          type = "int";
       }
    }
-   element acc_scale_0.amms
+   element acc_scale.amms
    {
       datum baseAddress
       {
-         value = "134222080";
+         value = "134222088";
          type = "String";
       }
    }
@@ -66,7 +66,7 @@
    {
       datum baseAddress
       {
-         value = "134222088";
+         value = "134222080";
          type = "String";
       }
    }
@@ -230,7 +230,7 @@
  <interface name="reset" internal="clk_50Mhz.clk_in_reset" type="reset" dir="end" />
  <interface name="sdram" internal="sdram.wire" type="conduit" dir="end" />
  <interface name="sdram_clk" internal="pll.outclk1" type="clock" dir="start" />
- <module name="acc_scale_0" kind="acc_scale" version="1.0" enabled="1">
+ <module name="acc_scale" kind="acc_scale" version="1.0" enabled="1">
   <parameter name="max_width" value="1024" />
  </module>
  <module name="clk_50Mhz" kind="clock_source" version="18.1" enabled="1">
@@ -278,7 +278,7 @@
   <parameter name="dataAddrWidth" value="28" />
   <parameter name="dataMasterHighPerformanceAddrWidth" value="1" />
   <parameter name="dataMasterHighPerformanceMapParam" value="" />
-  <parameter name="dataSlaveMapParam"><![CDATA[<address-map><slave name='sdram.s1' start='0x4000000' end='0x8000000' type='altera_avalon_new_sdram_controller.s1' /><slave name='nios2_cpu.debug_mem_slave' start='0x8000800' end='0x8001000' type='altera_nios2_gen2.debug_mem_slave' /><slave name='perf_cnt.control_slave' start='0x8001000' end='0x8001080' type='altera_avalon_performance_counter.control_slave' /><slave name='sgdma_s2m.csr' start='0x8001080' end='0x80010C0' type='altera_avalon_sgdma.csr' /><slave name='sgdma_m2s.csr' start='0x80010C0' end='0x8001100' type='altera_avalon_sgdma.csr' /><slave name='acc_scale_0.amms' start='0x8001100' end='0x8001108' type='acc_scale.amms' /><slave name='jtag_uart.avalon_jtag_slave' start='0x8001108' end='0x8001110' type='altera_avalon_jtag_uart.avalon_jtag_slave' /></address-map>]]></parameter>
+  <parameter name="dataSlaveMapParam"><![CDATA[<address-map><slave name='sdram.s1' start='0x4000000' end='0x8000000' type='altera_avalon_new_sdram_controller.s1' /><slave name='nios2_cpu.debug_mem_slave' start='0x8000800' end='0x8001000' type='altera_nios2_gen2.debug_mem_slave' /><slave name='perf_cnt.control_slave' start='0x8001000' end='0x8001080' type='altera_avalon_performance_counter.control_slave' /><slave name='sgdma_s2m.csr' start='0x8001080' end='0x80010C0' type='altera_avalon_sgdma.csr' /><slave name='sgdma_m2s.csr' start='0x80010C0' end='0x8001100' type='altera_avalon_sgdma.csr' /><slave name='jtag_uart.avalon_jtag_slave' start='0x8001100' end='0x8001108' type='altera_avalon_jtag_uart.avalon_jtag_slave' /><slave name='acc_scale.amms' start='0x8001108' end='0x8001110' type='acc_scale.amms' /></address-map>]]></parameter>
   <parameter name="data_master_high_performance_paddr_base" value="0" />
   <parameter name="data_master_high_performance_paddr_size" value="0" />
   <parameter name="data_master_paddr_base" value="0" />
@@ -721,9 +721,9 @@
    kind="avalon"
    version="18.1"
    start="nios2_cpu.data_master"
-   end="acc_scale_0.amms">
+   end="acc_scale.amms">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x08001100" />
+  <parameter name="baseAddress" value="0x08001108" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
@@ -732,7 +732,7 @@
    start="nios2_cpu.data_master"
    end="jtag_uart.avalon_jtag_slave">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x08001108" />
+  <parameter name="baseAddress" value="0x08001100" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
@@ -847,13 +847,13 @@
  <connection
    kind="avalon_streaming"
    version="18.1"
-   start="acc_scale_0.aso"
+   start="acc_scale.aso"
    end="sgdma_s2m.in" />
  <connection
    kind="avalon_streaming"
    version="18.1"
    start="sgdma_m2s.out"
-   end="acc_scale_0.asi" />
+   end="acc_scale.asi" />
  <connection kind="clock" version="18.1" start="clk_50Mhz.clk" end="pll.refclk" />
  <connection kind="clock" version="18.1" start="pll.outclk0" end="sdram.clk" />
  <connection kind="clock" version="18.1" start="pll.outclk0" end="nios2_cpu.clk" />
@@ -861,11 +861,7 @@
  <connection kind="clock" version="18.1" start="pll.outclk0" end="perf_cnt.clk" />
  <connection kind="clock" version="18.1" start="pll.outclk0" end="sgdma_m2s.clk" />
  <connection kind="clock" version="18.1" start="pll.outclk0" end="sgdma_s2m.clk" />
- <connection
-   kind="clock"
-   version="18.1"
-   start="pll.outclk0"
-   end="acc_scale_0.clock" />
+ <connection kind="clock" version="18.1" start="pll.outclk0" end="acc_scale.clock" />
  <connection
    kind="interrupt"
    version="18.1"
@@ -926,7 +922,7 @@
    kind="reset"
    version="18.1"
    start="clk_50Mhz.clk_reset"
-   end="acc_scale_0.reset" />
+   end="acc_scale.reset" />
  <connection
    kind="reset"
    version="18.1"
@@ -966,7 +962,7 @@
    kind="reset"
    version="18.1"
    start="nios2_cpu.debug_reset_request"
-   end="acc_scale_0.reset" />
+   end="acc_scale.reset" />
  <interconnectRequirement for="$system" name="qsys_mm.clockCrossingAdapter" value="HANDSHAKE" />
  <interconnectRequirement for="$system" name="qsys_mm.enableEccProtection" value="FALSE" />
  <interconnectRequirement for="$system" name="qsys_mm.insertDefaultSlave" value="FALSE" />
