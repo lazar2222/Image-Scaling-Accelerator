@@ -48,21 +48,21 @@ void printHelp()
 void printError(Command* cmd)
 {
 	int status = cmd->status;
-	if (status == 0) { printf("No error\n"); }
-	else if (status >= 1 && status <= 5) { printf("Failed to load image\n"); }
-	else if (status == 6) { printf("Invalid X scale factor\n"); }
-	else if (status == 7) { printf("Invalid Y scale factor\n"); }
-	else if (status == 8) { printf("Invalid picture start point\n"); }
-	else if (status == 9) { printf("Invalid picture end point\n"); }
+	if (status == 0)                       { printf("No error\n"); }
+	else if (status >= 1 && status <= 5)   { printf("Failed to load image\n"); }
+	else if (status == 6)                  { printf("Invalid X scale factor\n"); }
+	else if (status == 7)                  { printf("Invalid Y scale factor\n"); }
+	else if (status == 8)                  { printf("Invalid picture start point\n"); }
+	else if (status == 9)                  { printf("Invalid picture end point\n"); }
 	else if (status == 10 || status == 11) { printf("Failed to allocate output buffers\n"); }
 	else if (status >= 12 && status <= 15) { printf("Failed to save image\n"); }
-	else { printf("Unknown error\n"); }
+	else                                   { printf("Unknown error\n"); }
 }
 
 void cleanup(Command* cmd)
 {
-	if (cmd->sourceImage != NULL) { free(cmd->sourceImage); cmd->sourceImage = NULL; }
-	if (cmd->referenceImage != NULL) { free(cmd->referenceImage); cmd->referenceImage = NULL; }
+	if (cmd->sourceImage      != NULL) { free(cmd->sourceImage);      cmd->sourceImage      = NULL; }
+	if (cmd->referenceImage   != NULL) { free(cmd->referenceImage);   cmd->referenceImage   = NULL; }
 	if (cmd->destinationImage != NULL) { free(cmd->destinationImage); cmd->destinationImage = NULL; }
 }
 
@@ -82,40 +82,50 @@ Command parseCommand()
 	char next;
 	Command cmd;
 
-	cmd.status = 0;
-	cmd.benchmark = 0;
-	cmd.xScale = 0;
-	cmd.yScale = 0;
-	cmd.x = -1;
-	cmd.y = -1;
-	cmd.ex = -1;
-	cmd.ey = -1;
-	cmd.w = -1;
-	cmd.h = -1;
-	cmd.sourceWidth = -1;
-	cmd.sourceHeight = -1;
-	cmd.destinationWidth = -1;
+	cmd.status            = 0;
+	cmd.benchmark         = 0;
+	cmd.xScale            = 0;
+	cmd.yScale            = 0;
+	cmd.x                 = -1;
+	cmd.y                 = -1;
+	cmd.ex                = -1;
+	cmd.ey                = -1;
+	cmd.w                 = -1;
+	cmd.h                 = -1;
+	cmd.sourceWidth       = -1;
+	cmd.sourceHeight      = -1;
+	cmd.destinationWidth  = -1;
 	cmd.destinationHeight = -1;
-	cmd.sourceImage = NULL;
-	cmd.referenceImage = NULL;
-	cmd.destinationImage = NULL;
+	cmd.sourceImage       = NULL;
+	cmd.referenceImage    = NULL;
+	cmd.destinationImage  = NULL;
 
+	// Read filename
 	scanf("%s", cmd.fname);
 
+	// Eat up all spaces
 	for (next = ' '; next == ' '; next = getchar()) {}
 
+	// If next character is B we are in benchmark mode, return
 	if (next == 'B') { cmd.benchmark = 1; return cmd; }
-	else if (next == 'R') { scanf("%d %d %d %d", &cmd.x, &cmd.y, &cmd.w,  &cmd.h); }
+	// If next character is R read which part of image to resize
+	else if (next == 'R') { scanf("%d %d %d %d", &cmd.x, &cmd.y, &cmd.w, &cmd.h); }
+	// Else return character to buffer and proceed with reading scale factors
 	else { ungetc(next, stdin); }
 
+	// Read X scale factor and also write it to Y scale as it is the same if only one is supplied
 	scanf("%d", &cmd.xScale);
 	cmd.yScale = cmd.xScale;
 
+	// Eat up all spaces
 	for (next = ' '; next == ' '; next = getchar()) {}
 
+	// If next character is end of line command is complete, return
 	if (next == '\n' || next == '\r') { return cmd; }
+	// Else return character to buffer and proceed with reading Y scale factor
 	else { ungetc(next, stdin); }
 
+	// Read Y scale factor
 	scanf("%d", &cmd.yScale);
 
 	return cmd;
@@ -123,21 +133,28 @@ Command parseCommand()
 
 void loadImage(Command* cmd)
 {
+	// Prepared path to access hostfs and move to root dir
 	char ffname[MAX_PATH] = "/mnt/host/../../";
+	// Append entered filename
 	strcat(ffname, cmd->fname);
+
+	// Open file
 	FILE* f = fopen(ffname, "rb");
 	if (f == NULL) { cmd->status = 1; return; }
 
+	// Read sourceWidth and sourceHeight
 	size_t read = fread(&cmd->sourceWidth, sizeof(int), 1, f);
 	if (read != 1) { fclose(f); cmd->status = 2; return; }
 
 	read = fread(&cmd->sourceHeight, sizeof(int), 1, f);
 	if (read != 1) { fclose(f); cmd->status = 3; return; }
 
+	// Calculate image size and allocate memory
 	cmd->sourceSize = cmd->sourceWidth * cmd->sourceHeight;
 	cmd->sourceImage = malloc(sizeof(unsigned char) * cmd->sourceSize);
 	if (cmd->sourceImage == NULL) { fclose(f); cmd->status = 4; return; }
 
+	// Read image data into allocated buffer
 	read = fread(cmd->sourceImage, sizeof(unsigned char), cmd->sourceSize, f);
 	if (read != cmd->sourceSize) { fclose(f); cmd->status = 5; return; }
 
@@ -148,7 +165,9 @@ void prepareCommand(Command* cmd)
 {
 	int validScales[] = {-4, -3, -2, -1, 1, 2, 3, 4};
 
-	int validX = 0, validY = 0;
+	// Check if valid scale factors have been entered, report error if not
+	int validX = 0;
+	int validY = 0;
 	for (int i = 0; i < 8; i++)
 	{
 		if (cmd->xScale == validScales[i]) { validX = 1; }
@@ -157,70 +176,97 @@ void prepareCommand(Command* cmd)
 	if (validX == 0) { cmd->status = 6; return; }
 	if (validY == 0) { cmd->status = 7; return; }
 
+	// If R option was omitted x, y, w and h have default values (-1), if that is the case setup the range to encompass the whole image
 	if (cmd->x == -1) { cmd->x = 0; }
 	if (cmd->y == -1) { cmd->y = 0; }
 	if (cmd->w == -1) { cmd->w = cmd->sourceWidth; }
 	if (cmd->h == -1) { cmd->h = cmd->sourceHeight; }
 
+	// Calculate end points of range
 	cmd->ex = cmd->x + cmd->w;
 	cmd->ey = cmd->y + cmd->h;
 
-	if (cmd->x < 0 || cmd->x >= cmd->sourceWidth || cmd->y < 0 || cmd->y >= cmd->sourceHeight) { cmd->status = 8; return; }
+	// Check that range is inside the bounds of image
+	if (cmd->x < 0   || cmd->x >= cmd->sourceWidth || cmd->y < 0   || cmd->y >= cmd->sourceHeight) { cmd->status = 8; return; }
 	if (cmd->ex <= 0 || cmd->ex > cmd->sourceWidth || cmd->ey <= 0 || cmd->ey > cmd->sourceHeight) { cmd->status = 9; return; }
 
-	cmd->destinationWidth = cmd->w;
-	cmd->destinationHeight = cmd->h;
-
-	if(cmd->xScale < 0) { cmd->destinationWidth /= -cmd->xScale; }
-	else { cmd->destinationWidth *= cmd->xScale; }
-	if(cmd->yScale < 0) { cmd->destinationHeight /= -cmd->yScale; }
-	else { cmd->destinationHeight *= cmd->yScale; }
+	// Calculate destination image dimensions and size
+	cmd->destinationWidth  = cmd->xScale > 0 ? cmd->w * cmd->xScale : cmd->w / -cmd->xScale;
+	cmd->destinationHeight = cmd->yScale > 0 ? cmd->h * cmd->yScale : cmd->h / -cmd->yScale;
 
 	cmd->destinationSize = cmd->destinationWidth * cmd->destinationHeight;
 
-	cmd->referenceImage = malloc(sizeof(unsigned char) * cmd->destinationSize);
+	// Allocate two buffers for destination image, one for software and one for hardware scaling
+	cmd->referenceImage   = malloc(sizeof(unsigned char) * cmd->destinationSize);
 	cmd->destinationImage = malloc(sizeof(unsigned char) * cmd->destinationSize);
 
-	if (cmd->referenceImage == NULL) { cmd->status = 10; return; }
+	if (cmd->referenceImage   == NULL) { cmd->status = 10; return; }
 	if (cmd->destinationImage == NULL) { cmd->status = 11; return; }
 }
 
 void resizeImage(Command* cmd)
 {
+	// Reset and resetart performance counter
 	PERF_RESET(PERF_CNT_BASE);
 	PERF_START_MEASURING(PERF_CNT_BASE);
 
+	// Flush cache and start measuring time
 	alt_dcache_flush_all();
 	PERF_BEGIN(PERF_CNT_BASE, 1);
-	scaleSW(cmd->sourceImage, cmd->referenceImage, cmd->sourceWidth, cmd->sourceHeight, cmd->x, cmd->y, cmd->w, cmd->h, cmd->xScale, cmd->yScale);
+
+	// Run software scaler
+	scaleSW(cmd->sourceImage, cmd->referenceImage, cmd->sourceWidth, cmd->sourceHeight, cmd->x, cmd->y, cmd->w, cmd->h, cmd->destinationWidth, cmd->destinationHeight, cmd->xScale, cmd->yScale);
+
 	PERF_END(PERF_CNT_BASE, 1);
 
+	// Flush cache and start measuring time
 	alt_dcache_flush_all();
 	PERF_BEGIN(PERF_CNT_BASE, 2);
-	checkHWStatus(scaleHW(cmd->sourceImage, cmd->destinationImage, cmd->sourceWidth, cmd->sourceHeight, cmd->x, cmd->y, cmd->w, cmd->h, cmd->xScale, cmd->yScale));
+
+	// Run hardware scaler
+	//checkHWStatus(scaleHW(cmd->sourceImage, cmd->destinationImage, cmd->sourceWidth, cmd->sourceHeight, cmd->x, cmd->y, cmd->w, cmd->h, cmd->xScale, cmd->yScale));
+
+	PERF_END(PERF_CNT_BASE, 2);
+
+	// Flush cache and start measuring time
+	alt_dcache_flush_all();
+	PERF_BEGIN(PERF_CNT_BASE, 3);
+
+	// Run hardware/software scaler
+	//checkHWStatus(scaleHW(cmd->sourceImage, cmd->destinationImage, cmd->sourceWidth, cmd->sourceHeight, cmd->x, cmd->y, cmd->w, cmd->h, cmd->xScale, cmd->yScale));
+
 	PERF_END(PERF_CNT_BASE, 3);
 }
 
 void saveImage(Command* cmd)
 {
+	// Prepared path to access hostfs and move to root dir
 	char ffname[MAX_PATH] = "/mnt/host/../../";
+	// Append entered filename
 	strcat(ffname, cmd->fname);
+
+	// Find the position of the last dot (separating the filename from the extension)
 	int dot = strlen(ffname);
 	for (; ffname[dot] != '.'; dot--) {}
+
+	// Change extension to out and terminate string
 	ffname[dot + 1] = 'o';
 	ffname[dot + 2] = 'u';
 	ffname[dot + 3] = 't';
 	ffname[dot + 4] = 0;
 
+	// Open file
 	FILE* f = fopen(ffname, "wb");
 	if (f == NULL) { cmd->status = 12; return; }
 
+	// Write destinationWidth and destinationHeight
 	size_t write = fwrite(&cmd->destinationWidth, sizeof(int), 1, f);
 	if (write != 1) { fclose(f); cmd->status = 13; return; }
 
 	write = fwrite(&cmd->destinationHeight, sizeof(int), 1, f);
 	if (write != 1) { fclose(f); cmd->status = 14; return; }
 
+	// Write image data to file
 	write = fwrite(cmd->destinationImage, sizeof(unsigned char), cmd->destinationSize, f);
 	if (write != cmd->destinationSize) { fclose(f); cmd->status = 15; return; }
 
@@ -232,7 +278,7 @@ int main()
 	Command command;
 	Command* cmd = &command;
 
-	checkHWStatus(initHW());
+	//checkHWStatus(initHW());
 
 	printHelp();
 
@@ -243,9 +289,6 @@ int main()
 		loadImage(cmd);
 		CCC(cmd);
 		printf("Image loaded\n");
-
-		int a;
-		scanf("%d", &a);
 
 		if (cmd->benchmark)
 		{
@@ -259,7 +302,7 @@ int main()
 			resizeImage(cmd);
 			CCC(cmd);
 			printf("Image resized\n");
-			scanf("%d", &a);
+
 			saveImage(cmd);
 			CCC(cmd);
 			printf("Image saved\n");
