@@ -145,6 +145,7 @@ ELF := DVSProjApp.elf
 C_SRCS += main.c
 C_SRCS += sw_impl.c
 C_SRCS += hw_impl.c
+C_SRCS += benchmark_utils.c
 CXX_SRCS :=
 ASM_SRCS :=
 

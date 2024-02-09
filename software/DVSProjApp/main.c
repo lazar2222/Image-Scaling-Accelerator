@@ -14,9 +14,9 @@
 
 typedef struct
 {
-	char status;
+	int status;
 	char fname[MAX_PATH];
-	char benchmark;
+	int benchmark;
 	int xScale;
 	int yScale;
 	int x;
@@ -56,6 +56,7 @@ void printError(Command* cmd)
 	else if (status == 9)                  { printf("Invalid picture end point\n"); }
 	else if (status == 10 || status == 11) { printf("Failed to allocate output buffers\n"); }
 	else if (status >= 12 && status <= 15) { printf("Failed to save image\n"); }
+	else if (status == 16)                 { printf("Hardware error\n"); }
 	else                                   { printf("Unknown error\n"); }
 }
 
@@ -204,8 +205,11 @@ void prepareCommand(Command* cmd)
 	if (cmd->destinationImage == NULL) { cmd->status = 11; return; }
 }
 
-void resizeImage(Command* cmd)
+void resizeImage(Command* cmd, HWContext* ctx)
 {
+	int resHW;
+	int resHSCD;
+
 	// Reset and resetart performance counter
 	PERF_RESET(PERF_CNT_BASE);
 	PERF_START_MEASURING(PERF_CNT_BASE);
@@ -224,18 +228,30 @@ void resizeImage(Command* cmd)
 	PERF_BEGIN(PERF_CNT_BASE, 2);
 
 	// Run hardware scaler
-	//checkHWStatus(scaleHW(cmd->sourceImage, cmd->destinationImage, cmd->sourceWidth, cmd->sourceHeight, cmd->x, cmd->y, cmd->w, cmd->h, cmd->xScale, cmd->yScale));
+	scaleHW(ctx, cmd->sourceImage, cmd->destinationImage, cmd->sourceWidth, cmd->sourceHeight, cmd->x, cmd->y, cmd->w, cmd->h, cmd->destinationWidth, cmd->destinationHeight, cmd->xScale, cmd->yScale);
 
 	PERF_END(PERF_CNT_BASE, 2);
+
+	// Verify result
+	if (checkHW(ctx)) { cmd->status = 16; return; }
+	resHW = verify(cmd->referenceImage, cmd->destinationImage, cmd->destinationSize);
 
 	// Flush cache and start measuring time
 	alt_dcache_flush_all();
 	PERF_BEGIN(PERF_CNT_BASE, 3);
 
 	// Run hardware/software scaler
-	//checkHWStatus(scaleHW(cmd->sourceImage, cmd->destinationImage, cmd->sourceWidth, cmd->sourceHeight, cmd->x, cmd->y, cmd->w, cmd->h, cmd->xScale, cmd->yScale));
+	scaleHSCD(ctx, cmd->sourceImage, cmd->destinationImage, cmd->sourceWidth, cmd->sourceHeight, cmd->x, cmd->y, cmd->w, cmd->h, cmd->destinationWidth, cmd->destinationHeight, cmd->xScale, cmd->yScale);
 
 	PERF_END(PERF_CNT_BASE, 3);
+
+	// Verify result
+	if (checkHW(ctx)) { cmd->status = 16; return; }
+	resHSCD = verify(cmd->referenceImage, cmd->destinationImage, cmd->destinationSize);
+
+	// Print results
+	printf("HW scaling: %s, HSCD scaling: %s\n", resHW == 0 ? "OK" : "ERR", resHSCD == 0 ? "OK" : "ERR");
+	perf_print_formatted_report(PERF_CNT_BASE, ALT_CPU_CPU_FREQ, 3, "SW", "HW", "HSCD");
 }
 
 void saveImage(Command* cmd)
@@ -278,7 +294,11 @@ int main()
 	Command command;
 	Command* cmd = &command;
 
-	//checkHWStatus(initHW());
+	HWContext context;
+	HWContext* ctx = &context;
+
+	initHW(ctx);
+	if (checkHW(ctx)) { return 0; }
 
 	printHelp();
 
@@ -299,7 +319,7 @@ int main()
 			prepareCommand(cmd);
 			CCC(cmd);
 
-			resizeImage(cmd);
+			resizeImage(cmd, ctx);
 			CCC(cmd);
 			printf("Image resized\n");
 
@@ -310,6 +330,8 @@ int main()
 
 		cleanup(cmd);
 	}
+
+	cleanupHW(ctx);
 
 	return 0;
 }
