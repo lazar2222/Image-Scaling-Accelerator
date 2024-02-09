@@ -82,6 +82,7 @@ void submitResult(TestCase* test, int repeat, int idx, unsigned char* reference,
 	{
 		test->ok[repeat * 3 + idx] = verify(reference, target, size);
 	}
+	printf("%d%d%d ", repeat, idx, test->ok[repeat * 3 + idx]);
 	test->times[repeat * 3 + idx] = perf_get_section_time(PERF_CNT_BASE, idx);
 	PERF_START_MEASURING(PERF_CNT_BASE);
 }
@@ -154,9 +155,9 @@ void runTests(TestCase* tests, HWContext* ctx, char* fname, unsigned char* sourc
 
 	for (int i = 0; i < (BENCH_CASES + TEST_CASES); i++)
 	{
-		printf("Running test case %d of %d", i + 1, BENCH_CASES + TEST_CASES);
-
 		TestCase* test = &tests[i];
+
+		printf("Running test case %d of %d: %d %d %d %d %d %d\n", i + 1, BENCH_CASES + TEST_CASES, test->x, test->y, test->w, test->h, test->xScale, test->yScale);
 
 		// Calculate destination image dimensions
 		int destinationWidth  = test->xScale > 0 ? test->w * test->xScale : (test->w - test->xScale - 1) / -test->xScale;
@@ -208,6 +209,8 @@ void runTests(TestCase* tests, HWContext* ctx, char* fname, unsigned char* sourc
 
 		}
 
+		printf("\n");
+
 		if (WRITE_RESULT)
 		{
 			writeResult(test, fname, destinationImage, destinationWidth, destinationHeight);
@@ -222,7 +225,7 @@ void writeResults(TestCase* tests, unsigned int seed)
 {
 	char fname[MAX_PATH];
 
-	printf("Writing results to benchmark_%u.csv", seed);
+	printf("Writing results to benchmark_%u.csv\n", seed);
 	sprintf(fname, "/mnt/host/../../benchmark_%u.csv", seed);
 
 	FILE* f = fopen(fname, "w");
@@ -256,7 +259,7 @@ void benchmark(HWContext* ctx, char* fname, unsigned char* source, int width, in
 
 	unsigned int seed = perf_get_total_time(PERF_CNT_BASE);
 
-	printf("Starting benchmark, seed: %u", seed);
+	printf("Starting benchmark, seed: %u\n", seed);
 
 	generateTests(testCases, width, height, seed);
 

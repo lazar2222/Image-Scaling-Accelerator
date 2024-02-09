@@ -2,8 +2,8 @@
 <sch:Settings xmlns:sch="http://www.altera.com/embeddedsw/bsp/schema">
         <BspType>hal</BspType>
         <BspVersion>default</BspVersion>
-        <BspGeneratedTimeStamp>Feb 9, 2024 4:39:20 AM</BspGeneratedTimeStamp>
-        <BspGeneratedUnixTimeStamp>1707449960546</BspGeneratedUnixTimeStamp>
+        <BspGeneratedTimeStamp>Feb 10, 2024 12:02:30 AM</BspGeneratedTimeStamp>
+        <BspGeneratedUnixTimeStamp>1707519750686</BspGeneratedUnixTimeStamp>
         <BspGeneratedLocation>C:\Users\lazar\Desktop\DVSProj\software\DVSProjApp_bsp</BspGeneratedLocation>
         <BspSettingsFile>settings.bsp</BspSettingsFile>
         <SopcDesignFile>..\..\system.sopcinfo</SopcDesignFile>
