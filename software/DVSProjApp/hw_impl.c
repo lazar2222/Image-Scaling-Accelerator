@@ -118,7 +118,7 @@ void scaleHW(HWContext* ctx, unsigned char* source, unsigned char* destination, 
 
 	// Start using descriptors for tx from the beginning
 	alt_sgdma_descriptor* txDesc = &(ctx->descPtr[descIdx]);
-	for(int i = 0; i < height; i++)
+	for (int i = 0; i < height; i++)
 	{
 		// Construct descriptor for each source line
 		alt_avalon_sgdma_construct_mem_to_stream_desc(&(ctx->descPtr[descIdx]), &(ctx->descPtr[descIdx + 1]), (alt_u32*)&source[PIXEL(x, y + i, sourceWidth)], width, 0, 0, 0, 0);
@@ -129,7 +129,7 @@ void scaleHW(HWContext* ctx, unsigned char* source, unsigned char* destination, 
 
 	// Start using descriptors for rx right after tx stop descriptor
 	alt_sgdma_descriptor* rxDesc = &(ctx->descPtr[descIdx]);
-	for(int i = 0; i < destinationHeight; i++)
+	for (int i = 0; i < destinationHeight; i++)
 	{
 		// Construct descriptor for each destination line
 		alt_avalon_sgdma_construct_stream_to_mem_desc(&(ctx->descPtr[descIdx]), &(ctx->descPtr[descIdx + 1]), (alt_u32*)&destination[PIXEL(0, i, destinationWidth)], destinationWidth, 0);
@@ -143,11 +143,11 @@ void scaleHW(HWContext* ctx, unsigned char* source, unsigned char* destination, 
 	ctx->rxDone = 0;
 
 	// Start tx and rx SGDMA
-	if(alt_avalon_sgdma_do_async_transfer(ctx->txHandle, txDesc)) { ctx->status = 4; return; }
-	if(alt_avalon_sgdma_do_async_transfer(ctx->rxHandle, rxDesc)) { ctx->status = 5; return; }
+	if (alt_avalon_sgdma_do_async_transfer(ctx->txHandle, txDesc)) { ctx->status = 4; return; }
+	if (alt_avalon_sgdma_do_async_transfer(ctx->rxHandle, rxDesc)) { ctx->status = 5; return; }
 
 	// Wait for completion
-	while(ctx->txDone == 0 || ctx->rxDone == 0) {}
+	while (ctx->txDone == 0 || ctx->rxDone == 0) {}
 
 	// Stop tx and rx SGDMA
 	alt_avalon_sgdma_stop(ctx->txHandle);
@@ -172,7 +172,7 @@ void scaleHSCD(HWContext* ctx, unsigned char* source, unsigned char* destination
 	alt_sgdma_descriptor* txDesc = &(ctx->descPtr[descIdx]);
 	if (yUpscale)
 	{
-		for(int i = 0; i < height; i++)
+		for (int i = 0; i < height; i++)
 		{
 			// If upscaling construct descriptors as usual
 			alt_avalon_sgdma_construct_mem_to_stream_desc(&(ctx->descPtr[descIdx]), &(ctx->descPtr[descIdx + 1]), (alt_u32*)&source[PIXEL(x, y + i, sourceWidth)], width, 0, 0, 0, 0);
@@ -181,7 +181,7 @@ void scaleHSCD(HWContext* ctx, unsigned char* source, unsigned char* destination
 	}
 	else
 	{
-		for(int i = 0; i < height; i+= yScale + 1)
+		for (int i = 0; i < height; i+= yScale + 1)
 		{
 			// If downscaling construct descriptors only for each yScale-th source line
 			alt_avalon_sgdma_construct_mem_to_stream_desc(&(ctx->descPtr[descIdx]), &(ctx->descPtr[descIdx + 1]), (alt_u32*)&source[PIXEL(x, y + i, sourceWidth)], width, 0, 0, 0, 0);
@@ -196,7 +196,7 @@ void scaleHSCD(HWContext* ctx, unsigned char* source, unsigned char* destination
 
 	// Start using descriptors for rx right after tx stop descriptor
 	alt_sgdma_descriptor* rxDesc = &(ctx->descPtr[descIdx]);
-	for(int i = 0; i < destinationHeight; i++)
+	for (int i = 0; i < destinationHeight; i++)
 	{
 		// Rx descriptors are same as usual
 		alt_avalon_sgdma_construct_stream_to_mem_desc(&(ctx->descPtr[descIdx]), &(ctx->descPtr[descIdx + 1]), (alt_u32*)&destination[PIXEL(0, i, destinationWidth)], destinationWidth, 0);
@@ -216,11 +216,11 @@ void scaleHSCD(HWContext* ctx, unsigned char* source, unsigned char* destination
 	ctx->rxDone = 0;
 
 	// Start tx and rx SGDMA
-	if(alt_avalon_sgdma_do_async_transfer(ctx->txHandle, txDesc)) { ctx->status = 4; return; }
-	if(alt_avalon_sgdma_do_async_transfer(ctx->rxHandle, rxDesc)) { ctx->status = 5; return; }
+	if (alt_avalon_sgdma_do_async_transfer(ctx->txHandle, txDesc)) { ctx->status = 4; return; }
+	if (alt_avalon_sgdma_do_async_transfer(ctx->rxHandle, rxDesc)) { ctx->status = 5; return; }
 
 	// Wait for completion
-	while(ctx->txDone == 0 || ctx->rxDone == 0) {}
+	while (ctx->txDone == 0 || ctx->rxDone == 0) {}
 
 	// Stop tx and rx SGDMA
 	alt_avalon_sgdma_stop(ctx->txHandle);

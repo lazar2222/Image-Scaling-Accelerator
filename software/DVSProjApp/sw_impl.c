@@ -38,12 +38,12 @@ void scaleSW(unsigned char* source, unsigned char* destination, int sourceWidth,
 		{
 			// We scale the first line manually and memcpy it remaining yScale - 1 times via fall-through switch statement similar to those used when loop unrolling, again in hopes of compiler optimization
 			scaleLineSW(&source[PIXEL(x, y + i, sourceWidth)], &destination[PIXEL(0, i * yScale, destinationWidth)], width, xScale);
-			switch(yScale)
+			switch (yScale)
 			{
 			case 4: { memcpy(&destination[PIXEL(0, i * yScale + 3, destinationWidth)], &destination[PIXEL(0, i * yScale, destinationWidth)], destinationWidth); }
 			case 3: { memcpy(&destination[PIXEL(0, i * yScale + 2, destinationWidth)], &destination[PIXEL(0, i * yScale, destinationWidth)], destinationWidth); }
 			case 2: { memcpy(&destination[PIXEL(0, i * yScale + 1, destinationWidth)], &destination[PIXEL(0, i * yScale, destinationWidth)], destinationWidth); }
-			default : { break; }
+			default: { break; }
 			}
 		}
 	}

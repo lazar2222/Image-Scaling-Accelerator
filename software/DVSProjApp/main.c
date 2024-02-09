@@ -210,7 +210,7 @@ void resizeImage(Command* cmd, HWContext* ctx)
 	int resHW;
 	int resHSCD;
 
-	// Reset and resetart performance counter
+	// Reset and restart performance counter
 	PERF_RESET(PERF_CNT_BASE);
 	PERF_START_MEASURING(PERF_CNT_BASE);
 
@@ -256,37 +256,7 @@ void resizeImage(Command* cmd, HWContext* ctx)
 
 void saveImage(Command* cmd)
 {
-	// Prepared path to access hostfs and move to root dir
-	char ffname[MAX_PATH] = "/mnt/host/../../";
-	// Append entered filename
-	strcat(ffname, cmd->fname);
-
-	// Find the position of the last dot (separating the filename from the extension)
-	int dot = strlen(ffname);
-	for (; ffname[dot] != '.'; dot--) {}
-
-	// Change extension to out and terminate string
-	ffname[dot + 1] = 'o';
-	ffname[dot + 2] = 'u';
-	ffname[dot + 3] = 't';
-	ffname[dot + 4] = 0;
-
-	// Open file
-	FILE* f = fopen(ffname, "wb");
-	if (f == NULL) { cmd->status = 12; return; }
-
-	// Write destinationWidth and destinationHeight
-	size_t write = fwrite(&cmd->destinationWidth, sizeof(int), 1, f);
-	if (write != 1) { fclose(f); cmd->status = 13; return; }
-
-	write = fwrite(&cmd->destinationHeight, sizeof(int), 1, f);
-	if (write != 1) { fclose(f); cmd->status = 14; return; }
-
-	// Write image data to file
-	write = fwrite(cmd->destinationImage, sizeof(unsigned char), cmd->destinationSize, f);
-	if (write != cmd->destinationSize) { fclose(f); cmd->status = 15; return; }
-
-	fclose(f);
+	cmd->status = writeImage(cmd->fname, cmd->destinationImage, cmd->destinationWidth, cmd->destinationHeight);
 }
 
 int main()
@@ -296,6 +266,10 @@ int main()
 
 	HWContext context;
 	HWContext* ctx = &context;
+
+	// Enable performance counter so we can seed from it later
+	PERF_RESET(PERF_CNT_BASE);
+	PERF_START_MEASURING(PERF_CNT_BASE);
 
 	initHW(ctx);
 	if (checkHW(ctx)) { return 0; }
@@ -312,7 +286,7 @@ int main()
 
 		if (cmd->benchmark)
 		{
-
+			benchmark(ctx, cmd->fname, cmd->sourceImage, cmd->sourceWidth, cmd->sourceHeight);
 		}
 		else
 		{
