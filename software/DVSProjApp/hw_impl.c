@@ -181,7 +181,7 @@ void scaleHSCD(HWContext* ctx, unsigned char* source, unsigned char* destination
 	}
 	else
 	{
-		for(int i = 0; i < height; i+= yScale)
+		for(int i = 0; i < height; i+= yScale + 1)
 		{
 			// If downscaling construct descriptors only for each yScale-th source line
 			alt_avalon_sgdma_construct_mem_to_stream_desc(&(ctx->descPtr[descIdx]), &(ctx->descPtr[descIdx + 1]), (alt_u32*)&source[PIXEL(x, y + i, sourceWidth)], width, 0, 0, 0, 0);

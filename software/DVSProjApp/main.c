@@ -192,8 +192,8 @@ void prepareCommand(Command* cmd)
 	if (cmd->ex <= 0 || cmd->ex > cmd->sourceWidth || cmd->ey <= 0 || cmd->ey > cmd->sourceHeight) { cmd->status = 9; return; }
 
 	// Calculate destination image dimensions and size
-	cmd->destinationWidth  = cmd->xScale > 0 ? cmd->w * cmd->xScale : cmd->w / -cmd->xScale;
-	cmd->destinationHeight = cmd->yScale > 0 ? cmd->h * cmd->yScale : cmd->h / -cmd->yScale;
+	cmd->destinationWidth  = cmd->xScale > 0 ? cmd->w * cmd->xScale : (cmd->w - cmd->xScale - 1) / -cmd->xScale;
+	cmd->destinationHeight = cmd->yScale > 0 ? cmd->h * cmd->yScale : (cmd->h - cmd->yScale - 1) / -cmd->yScale;
 
 	cmd->destinationSize = cmd->destinationWidth * cmd->destinationHeight;
 

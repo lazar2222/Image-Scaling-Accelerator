@@ -153,7 +153,7 @@ begin
 
   -- Reset counter once both have run off the end of the frame
   -- Stream counter shouldnt continue counting past the first pixel of img_height row if dma is setup correctly
-  cnt_reset <= reset or (stream_row = img_height and output_row = img_height);
+  cnt_reset <= reset or (stream_row >= img_height and output_row >= img_height);
 
   asi_ready <= stdlogic(stream_can_write);
   
