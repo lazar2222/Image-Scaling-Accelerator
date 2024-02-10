@@ -83,8 +83,13 @@ void submitResult(TestCase* test, int repeat, int idx, unsigned char* reference,
 		test->ok[repeat * 3 + idx] = verify(reference, target, size);
 	}
 	printf("%d%d%d ", repeat, idx, test->ok[repeat * 3 + idx]);
-	test->times[repeat * 3 + idx] = perf_get_section_time(PERF_CNT_BASE, idx);
-	PERF_START_MEASURING(PERF_CNT_BASE);
+}
+
+void submitTimes(TestCase* test, int repeat)
+{
+	test->times[repeat * 3 + 0] = perf_get_section_time(PERF_CNT_BASE, 1);
+	test->times[repeat * 3 + 1] = perf_get_section_time(PERF_CNT_BASE, 2);
+	test->times[repeat * 3 + 2] = perf_get_section_time(PERF_CNT_BASE, 3);
 }
 
 int writeImage(char* fname, unsigned char* destinationImage, int destinationWidth, int destinationHeight)
@@ -207,6 +212,8 @@ void runTests(TestCase* tests, HWContext* ctx, char* fname, unsigned char* sourc
 			if (checkHW(ctx)) {  printf("Hardware error\n"); continue; }
 			submitResult(test, j, 2, referenceImage, destinationImage, destinationWidth * destinationHeight);
 
+			// Submit times
+			submitTimes(test, j);
 		}
 
 		printf("\n");
