@@ -14,9 +14,16 @@ void scaleLineSW(unsigned char* source, unsigned char* destination, int width, i
 		{
 			// Using memset in hopes of compiler optimization
 			//memset(&destination[j], source[i], xScale);
-			for (int k = 0; k < xScale; k++)
+			/*for (int k = 0; k < xScale; k++)
 			{
 				destination[j + k] = source[i];
+			}*/
+			switch (xScale)
+			{
+			case 4:  { destination[j + 3] = source[i]; }
+			case 3:  { destination[j + 2] = source[i]; }
+			case 2:  { destination[j + 1] = source[i]; }
+			default: { destination[j + 0] = source[i]; break; }
 			}
 		}
 	}
@@ -35,9 +42,9 @@ void scaleLineSW(unsigned char* source, unsigned char* destination, int width, i
 
 void scaleSW(unsigned char* source, unsigned char* destination, int sourceWidth, int sourceHeight, int x, int y, int width, int height, int destinationWidth, int destinationHeight, int xScale, int yScale)
 {
-	if (yScale > 0)
+		if (yScale > 0)
 	{
-		// For each source line, scale it and write it to destination yScale times
+				// For each source line, scale it and write it to destination yScale times
 		for (int i = 0, j = 0; i < height; i++, j += yScale)
 		{
 			// We scale the first line manually and memcpy it remaining yScale - 1 times via fall-through switch statement similar to those used when loop unrolling, again in hopes of compiler optimization
@@ -56,7 +63,7 @@ void scaleSW(unsigned char* source, unsigned char* destination, int sourceWidth,
 		// When downscaling we have to negate the scaling factor
 		yScale = - yScale;
 
-		// For each yScale-th source line, scale it and write it to destination in consecutive locations
+				// For each yScale-th source line, scale it and write it to destination in consecutive locations
 		for (int i = 0, j = 0; i < height; i += yScale, j++)
 		{
 			scaleLineSW(&source[PIXEL(x, y + i, sourceWidth)], &destination[PIXEL(0, j, destinationWidth)], width, xScale);
